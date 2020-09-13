@@ -157,7 +157,13 @@ class _RedirectWSGIApp(object):
 				start_response('200 OK', [('Content-type', 'text/html; charset=utf-8')])
 				#サーバ側で処理
 				self.hook(ret)
-				return [("<html lang='"+self.lang+"'><head><title>Authorization result</title><meta charset='utf-8'></head><body>"+self.successMessage+"</body></html>").encode('utf-8')]
+
+
+
+				response=[("<html lang='"+self.lang+"'><head><title>Authorization result</title><meta charset='utf-8'></head><body>"+self.successMessage+"<script><!--\n").encode('utf-8')]
+				response.append("window.close()\n".encode("utf-8"))
+				response.append("--></script></body></html>".encode("utf-8"))
+				return response
 			except OAuth2Error as e:
 				start_response('400 Bad Request', [('Content-type', 'text/html; charset=utf-8')])
 				return [("<html lang='"+self.lang+"'><head><title>Authorization result</title><meta charset='utf-8'></head><body>"+self.failedMessage+"</body></html>").encode('utf-8')]
