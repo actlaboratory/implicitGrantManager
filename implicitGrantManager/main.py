@@ -130,8 +130,6 @@ class _RedirectWSGIApp(object):
 
 	def __call__(self, environ, start_response):
 		"""
-			WSGI Callable.
-
 			Args:
 				environ (Mapping[str, Any]): The WSGI environment.
 				start_response (Callable[str, list]): The WSGI start_response
@@ -154,12 +152,10 @@ class _RedirectWSGIApp(object):
 				ret = self.oauth.parse_request_uri_response(uri)
 
 				#例外発生しなければ正当なリクエスト
-				start_response('200 OK', [('Content-type', 'text/html; charset=utf-8')])
 				#サーバ側で処理
 				self.hook(ret)
 
-
-
+				start_response('200 OK', [('Content-type', 'text/html; charset=utf-8')])
 				response=[("<html lang='"+self.lang+"'><head><title>Authorization result</title><meta charset='utf-8'></head><body>"+self.successMessage+"<script><!--\n").encode('utf-8')]
 				response.append("window.close()\n".encode("utf-8"))
 				response.append("--></script></body></html>".encode("utf-8"))
@@ -167,15 +163,3 @@ class _RedirectWSGIApp(object):
 			except OAuth2Error as e:
 				start_response('400 Bad Request', [('Content-type', 'text/html; charset=utf-8')])
 				return [("<html lang='"+self.lang+"'><head><title>Authorization result</title><meta charset='utf-8'></head><body>"+self.failedMessage+"</body></html>").encode('utf-8')]
-
-if __name__ == '__main__':
-	import time
-	import webbrowser
-	a = ImplicitGrantManager("1268961439.c17ebb283f3fe3659061d0ee173e42e24ac997afa6d45d1ea8880a426104d739","https://apiv2.twitcasting.tv/oauth2/authorize",9338)
-	url = a.getUrl()
-	webbrowser.open(url, new=1, autoraise=True)
-	while(True):
-		time.sleep(0.01)
-		if a.getToken():
-			print(a.getToken())
-			break
