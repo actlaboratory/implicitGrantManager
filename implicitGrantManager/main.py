@@ -33,7 +33,8 @@ class ImplicitGrantManager:
 		self.wsgi_app = _RedirectWSGIApp(
 				self.port,
 				self.oauth,
-				self._registToken
+				self._registToken,
+				self._failedRequest
 			)
 		self.localServer = wsgiref.simple_server.make_server("localhost", self.port, self.wsgi_app, handler_class=_WSGIRequestHandler)
 		thread = threading.Thread(target=self._localServerThread,args=(self.localServer,))
@@ -61,7 +62,9 @@ class ImplicitGrantManager:
 
 	def getToken(self):
 		"""
-			Get accesstoken (success) or None (waiting / failed)
+			Get accesstoken (success), "" (failed) or None (waiting)
+			If returned "" and the browser stays open, software should close that.
+
 			Returns:
 				tokenData (dict) or None
 		"""
@@ -71,6 +74,9 @@ class ImplicitGrantManager:
 
 	def _registToken(self,result):
 		self.result=result
+
+	def _failedRequest(self):
+		self.result=""
 
 	def __del__(self):
 		self._shutdown()
@@ -98,13 +104,15 @@ class _RedirectWSGIApp(object):
 		WSGI app to handle the authorization redirect.
 		Stores the request URI and displays the given success message.
 	"""
-	def __init__(self, port, oauth, hook):
+	def __init__(self, port, oauth, hook,failedHook):
 		"""
 			Args:
 				port (int): The port number That receive request
 				oauth (oauthlib.oauth2): The oAuth object using validation request
 				hook (callable): The function when got token
+				failedHook (callable): The function when authorization failed (ex: disagreed authorize)
 		"""
+
 		self.successMessage="Authorization successfully.  Close browser and go back application."
 		self.failedMessage="Authorization failed.  Please try again."
 		self.transferMessage="If the screen does not switch after a while, open this page in another browser."
@@ -113,6 +121,7 @@ class _RedirectWSGIApp(object):
 		self.port = port
 		self.oauth = oauth
 		self.hook = hook
+		self.failedHook = failedHook
 
 	def setMessage(self,lang,success,failed,transfer):
 		"""
@@ -161,5 +170,7 @@ class _RedirectWSGIApp(object):
 				response.append("--></script></body></html>".encode("utf-8"))
 				return response
 			except OAuth2Error as e:
+				self.failedHook()
+
 				start_response('400 Bad Request', [('Content-type', 'text/html; charset=utf-8')])
 				return [("<html lang='"+self.lang+"'><head><title>Authorization result</title><meta charset='utf-8'></head><body>"+self.failedMessage+"</body></html>").encode('utf-8')]

@@ -14,6 +14,10 @@ while(True):
 	time.sleep(0.01)
 
 	# return dict or None
-	if manager.getToken():
+	token=manager.getToken()
+	if token=="":
+		print("Authorization failed.  May be user disagreed.")
+		break
+	elif token:
 		print(manager.getToken())
 		break
