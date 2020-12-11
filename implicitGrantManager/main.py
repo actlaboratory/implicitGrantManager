@@ -69,7 +69,7 @@ class ImplicitGrantManager:
 				tokenData (dict) or None
 		"""
 		if self.result!=None:
-			self._shutdown()
+			self.shutdown()
 		return self.result
 
 	def _registToken(self,result):
