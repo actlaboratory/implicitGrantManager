@@ -79,12 +79,12 @@ class ImplicitGrantManager:
 		self.result=""
 
 	def __del__(self):
-		self._shutdown()
+		self.shutdown()
 
-	def _shutdown(self):
+	def shutdown(self):
 		if self.localServer:
-			self.localServer.shutdown()
 			self.localServer=None
+			self.localServer.shutdown()
 
 	def _localServerThread(self,server):
 		server.serve_forever()
