@@ -3,7 +3,7 @@
 from .main import *
 
 __copyright__ = 'Copyright (C) 2020 yamahubuki'
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 __license__ = 'MIT'
 __author__ = 'yamahubuki'
 __author_email__ = 'itiro.ishino@gmail.com'
