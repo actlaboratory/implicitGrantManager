@@ -113,9 +113,9 @@ class _RedirectWSGIApp(object):
 				failedHook (callable): The function when authorization failed (ex: disagreed authorize)
 		"""
 
-		self.successMessage="Authorization successfully.  Close browser and go back application."
+		self.successMessage="Authorization successful.  Close this window and go back to your application."
 		self.failedMessage="Authorization failed.  Please try again."
-		self.transferMessage="If the screen does not switch after a while, open this page in another browser."
+		self.transferMessage="If the screen does not change after a while, open this page in another browser."
 		self.lang = "ja"
 
 		self.port = port
