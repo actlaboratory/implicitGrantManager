@@ -3,6 +3,21 @@ import uuid
 import wsgiref.util
 from oauthlib.oauth2 import MobileApplicationClient,OAuth2Error
 from wsgiref.simple_server import make_server
+import http.server
+import socketserver
+import socket
+
+def server_bind(self):
+	"""Override server_bind to fix UnicodeDecodeError when computer name has non-ascii characters."""
+	socketserver.TCPServer.server_bind(self)
+	host, port = self.server_address[:2]
+	try:
+		self.server_name = socket.getfqdn(host)
+	except UnicodeDecodeError:
+		self.server_name = "localhost"
+	self.server_port = port
+
+http.server.HTTPServer.server_bind = server_bind
 
 class ImplicitGrantManager:
 	def __init__(self,cid,oauthPageUrl,receivePort):
