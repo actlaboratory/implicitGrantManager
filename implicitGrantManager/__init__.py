@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 from .main import *
 
-__copyright__ = 'Copyright (C) 2020 yamahubuki'
-__version__ = '1.2.3'
+__copyright__ = 'Copyright (C) 2020-2021 yamahubuki, ACT Laboratory'
+__version__ = '1.3.0'
 __license__ = 'MIT'
 __author__ = 'yamahubuki'
 __author_email__ = 'itiro.ishino@gmail.com'
